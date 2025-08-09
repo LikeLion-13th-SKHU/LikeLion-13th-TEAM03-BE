@@ -2,38 +2,40 @@ package team3.sambakja.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class GuideService {
 
     @Value("${api.bank.key}")
-    private String key;
+    private String BankKey;
+
+    @Value("${api.Startup.key}")
+    private String StartupKey;
 
     private final RestTemplate restTemplate;
     private final XmlMapper xmlMapper;
     private final ObjectMapper jsonMapper;
 
     private static final String BANK_API_URL = "https://apis.data.go.kr/B190030/GetFundLoanInfoService/getFundLoanList";
+    //private static final String STARTUP_API_URL = "https://apis.data.go.kr/B552735/kisedKstartupService01";
+    //private static final String STARTUP_API_URL = "https://nidapi.k-startup.go.kr/api/kisedKstartupService/v1/getBusinessInformation";
+    private static final String STARTUP_API_URL = "https://apis.data.go.kr/B552735/kisedKstartupService01/getAnnouncementInformation01";
 
-    public GuideService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-        this.xmlMapper = new XmlMapper();
-        this.jsonMapper = new ObjectMapper();
-    }
-
-    public String fetchData(int pageNo, int numOfRows, int bseYy) {
+    //한국산업은행_기금대출정보
+    public String xmlData(int pageNo, int numOfRows, int bseYy) {
         String url = String.format("%s?serviceKey=%s&pageNo=%d&numOfRows=%d&bseYy=%d",
-            BANK_API_URL, key, pageNo, numOfRows, bseYy);
+            BANK_API_URL, BankKey, pageNo, numOfRows, bseYy);
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
@@ -42,7 +44,6 @@ public class GuideService {
 
     public String convertXmlToJson(String xmlData) {
         try {
-
             Object data = xmlMapper.readValue(xmlData, Object.class);
 
             return jsonMapper.writeValueAsString(data);
@@ -51,14 +52,15 @@ public class GuideService {
         }
     }
 
-    public String fetchDataAsJson(int pageNo, int numOfRows, int bseYy) {
-        String xmlData = fetchData(pageNo, numOfRows, bseYy);
+    public String jsonData(int pageNo, int numOfRows, int bseYy) {
+        String xmlData = xmlData(pageNo, numOfRows, bseYy);
+
         return convertXmlToJson(xmlData);
     }
 
-    public String fetchSmallBusinessFunds(int pageNo, int numOfRows, int bseYy) {
+    public String getBank(int pageNo, int numOfRows, int bseYy) {
         try {
-            String jsonData = fetchDataAsJson(pageNo, numOfRows, bseYy);
+            String jsonData = jsonData(pageNo, numOfRows, bseYy);
 
             Object dataObj = jsonMapper.readValue(jsonData, Object.class);
 
@@ -72,7 +74,6 @@ public class GuideService {
                     if (items != null && items.containsKey("item")) {
                         List<Map<String, Object>> itemList = (List<Map<String, Object>>) items.get("item");
 
-                        // 기금명이 소상공인시장진흥공단인 항목만 필터링
                         List<Map<String, Object>> filteredItems = itemList.stream()
                             .filter(item -> {
                                 String brwEdaNm = (String) item.get("brwEdaNm");
@@ -93,8 +94,17 @@ public class GuideService {
         }
     }
 
-    // 여기까지 한국산업은행_기금대출정보
+    // 서울시 창업 프로그램 API
+    public String getStartup() {
 
+        String encodedSeoul = URLEncoder.encode("서울", StandardCharsets.UTF_8);
 
+        String url = String.format("%s?serviceKey=%s&cond[supt_regin::LIKE]=%s&returnType=json&page=%d&perPage=%d",
+            STARTUP_API_URL, StartupKey, encodedSeoul, 1, 10);
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        return response.getBody();
+    }
 
 }
