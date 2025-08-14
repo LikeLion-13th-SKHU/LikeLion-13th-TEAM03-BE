@@ -4,17 +4,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import team3.sambakja.client.Client;
-import team3.sambakja.dto.DongRequest;
-import team3.sambakja.dto.DongResponse;
-import team3.sambakja.dto.RegionRequest;
-import team3.sambakja.dto.RegionListResponse;
+import team3.sambakja.dto.request.DongRequest;
+import team3.sambakja.dto.response.DongResponse;
+import team3.sambakja.dto.request.RegionRequest;
+import team3.sambakja.dto.response.RegionListResponse;
 
 @RestController("/api/region")
-public class ReportController {
+public class RegionController {
 
     private final Client client;
 
-    public ReportController(Client client) {
+    public RegionController(Client client) {
         this.client = client;
     }
 
