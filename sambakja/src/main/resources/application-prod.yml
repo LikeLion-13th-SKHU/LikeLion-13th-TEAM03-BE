@@ -1,5 +1,5 @@
 api:
   bank:
-    key: "hJlj98tPqRwOkHdnaIJTbu8L1q3Ch1gn%2Bx%2BQXpu07yMQ4bkR4JTPUA3NrfBZl7BVuq%2BVasX9GEbEQkRADvRQxg%3D%3D"
+    key: ${api.bank.key}
   Startup:
-    key: "hJlj98tPqRwOkHdnaIJTbu8L1q3Ch1gn%2Bx%2BQXpu07yMQ4bkR4JTPUA3NrfBZl7BVuq%2BVasX9GEbEQkRADvRQxg%3D%3D"
+    key: ${api.Startup.key}
