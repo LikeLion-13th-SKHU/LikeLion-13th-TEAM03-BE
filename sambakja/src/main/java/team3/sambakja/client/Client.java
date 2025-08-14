@@ -25,7 +25,7 @@ public class Client {
     }
 
 
-    public RegionListResponse getReport(RegionRequest regionRequest) {
+    public RegionListResponse fetchDongListByRegion(RegionRequest regionRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -36,8 +36,7 @@ public class Client {
         ).orElse(new RegionListResponse(java.util.List.of()));
     }
 
-
-    public DongResponse getRecommend(DongRequest dongRequest) {
+    public DongResponse fetchRegionReportByDong(DongRequest dongRequest) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

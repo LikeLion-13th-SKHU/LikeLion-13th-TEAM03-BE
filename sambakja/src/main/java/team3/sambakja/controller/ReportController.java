@@ -8,9 +8,8 @@ import team3.sambakja.dto.DongRequest;
 import team3.sambakja.dto.DongResponse;
 import team3.sambakja.dto.RegionRequest;
 import team3.sambakja.dto.RegionListResponse;
-import java.util.List;
 
-@RestController
+@RestController("/api/region")
 public class ReportController {
 
     private final Client client;
@@ -19,13 +18,13 @@ public class ReportController {
         this.client = client;
     }
 
-    @PostMapping("/report")
-    public RegionListResponse getReport(@RequestBody RegionRequest regionRequest){
-        return client.getReport(regionRequest);
+    @PostMapping("/dongs")
+    public RegionListResponse getDongList(@RequestBody RegionRequest regionRequest){
+        return client.fetchDongListByRegion(regionRequest);
     }
 
-    @PostMapping("recommend")
-    public DongResponse getRecommend(@RequestBody DongRequest dongRequest) {
-        return client.getRecommend(dongRequest);
+    @PostMapping("/report")
+    public DongResponse getRegionReport(@RequestBody DongRequest dongRequest) {
+        return client.fetchRegionReportByDong(dongRequest);
     }
 }
