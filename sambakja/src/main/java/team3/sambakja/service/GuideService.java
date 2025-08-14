@@ -18,24 +18,25 @@ import java.util.stream.Collectors;
 public class GuideService {
 
     @Value("${api.bank.key}")
-    private String BankKey;
+    private String bankKey;
 
-    @Value("${api.Startup.key}")
-    private String StartupKey;
+    @Value("${api.startup.key}")
+    private String startupKey;
+
+    @Value("${api.bank.url}")
+    private String bankApiUrl;
+
+    @Value("${api.startup.url}")
+    private String startupApiUrl;
 
     private final RestTemplate restTemplate;
     private final XmlMapper xmlMapper;
     private final ObjectMapper jsonMapper;
 
-    private static final String BANK_API_URL = "https://apis.data.go.kr/B190030/GetFundLoanInfoService/getFundLoanList";
-    //private static final String STARTUP_API_URL = "https://apis.data.go.kr/B552735/kisedKstartupService01";
-    //private static final String STARTUP_API_URL = "https://nidapi.k-startup.go.kr/api/kisedKstartupService/v1/getBusinessInformation";
-    private static final String STARTUP_API_URL = "https://apis.data.go.kr/B552735/kisedKstartupService01/getAnnouncementInformation01";
-
     //한국산업은행_기금대출정보
     public String xmlData(int pageNo, int numOfRows, int bseYy) {
         String url = String.format("%s?serviceKey=%s&pageNo=%d&numOfRows=%d&bseYy=%d",
-            BANK_API_URL, BankKey, pageNo, numOfRows, bseYy);
+                bankApiUrl, bankKey, pageNo, numOfRows, bseYy);
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
@@ -99,8 +100,8 @@ public class GuideService {
 
         String encodedSeoul = URLEncoder.encode("서울", StandardCharsets.UTF_8);
 
-        String url = String.format("%s?serviceKey=%s&cond[supt_regin::LIKE]=%s&returnType=json&page=%d&perPage=%d",
-            STARTUP_API_URL, StartupKey, encodedSeoul, 1, 10);
+        String url = String.format("%s?serviceKey=%s&cond[supt_regin::LIKE]=%s&returnType=json&page=1&perPage=10",
+                startupApiUrl, startupKey, encodedSeoul);
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
