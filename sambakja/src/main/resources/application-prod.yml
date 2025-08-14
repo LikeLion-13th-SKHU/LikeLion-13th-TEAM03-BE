@@ -1,5 +1,0 @@
-api:
-  bank:
-    key: ${api.bank.key}
-  Startup:
-    key: ${api.Startup.key}

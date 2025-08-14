@@ -7,8 +7,7 @@ import team3.sambakja.client.Client;
 import team3.sambakja.dto.DongRequest;
 import team3.sambakja.dto.DongResponse;
 import team3.sambakja.dto.RegionRequest;
-import team3.sambakja.dto.RegionResponse;
-
+import team3.sambakja.dto.RegionListResponse;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ public class ReportController {
     }
 
     @PostMapping("/report")
-    public List<RegionResponse> getReport(@RequestBody RegionRequest regionRequest){
+    public RegionListResponse getReport(@RequestBody RegionRequest regionRequest){
         return client.getReport(regionRequest);
     }
 
