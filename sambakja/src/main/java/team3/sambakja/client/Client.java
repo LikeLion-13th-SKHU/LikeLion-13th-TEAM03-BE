@@ -6,9 +6,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import team3.sambakja.dto.*;
-
-import java.util.Arrays;
+import team3.sambakja.dto.request.BizRequest;
+import team3.sambakja.dto.request.DongRequest;
+import team3.sambakja.dto.request.RegionRequest;
+import team3.sambakja.dto.response.BizResponse;
+import team3.sambakja.dto.response.DongResponse;
+import team3.sambakja.dto.response.RegionListResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,36 +19,39 @@ import java.util.Optional;
 public class Client {
 
     private final RestTemplate restTemplate;
-    private final String URL;
+
+    @Value("${api.service.region-dong-url}")
+    private String regionDongUrl;
+
+    @Value("${api.service.region-report-url}")
+    private String regionReportUrl;
+
+    @Value("${api.service.biz-recommend-url}")
+    private String bizRecommendUrl;
 
     public Client(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.URL = "${url~~}";
     }
 
-
-    public List<RegionResponse> getReport(RegionRequest regionRequest) {
-
+    public RegionListResponse fetchDongListByRegion(RegionRequest regionRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<RegionRequest> request = new HttpEntity<>(regionRequest, headers);
 
-        RegionResponse[] responses = restTemplate.postForObject(URL, request, RegionResponse[].class);
-
-        return Optional.ofNullable(responses)
-            .map(Arrays::asList)
-            .orElse(List.of());
+        return Optional.ofNullable(
+                restTemplate.postForObject(regionDongUrl, request, RegionListResponse.class)
+        ).orElse(new RegionListResponse(java.util.List.of()));
     }
 
-    public DongResponse getRecommend(DongRequest dongRequest) {
+    public DongResponse fetchRegionReportByDong(DongRequest dongRequest) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<DongRequest> request = new HttpEntity<>(dongRequest, headers);
 
-        DongResponse response = restTemplate.postForObject(URL, request, DongResponse.class);
+        DongResponse response = restTemplate.postForObject(regionReportUrl, request, DongResponse.class);
 
         return Optional.ofNullable(response)
             .orElse(new DongResponse("", new DongResponse.Report(
@@ -53,6 +59,20 @@ public class Client {
                 new DongResponse.Business("", ""),
                 ""
             )));
+    }
+
+    public BizResponse fetchBizRecommendation(BizRequest requestDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<BizRequest> request = new HttpEntity<>(requestDto, headers);
+
+        return Optional.ofNullable(
+                restTemplate.postForObject(bizRecommendUrl, request, BizResponse.class)
+        ).orElse(new BizResponse(
+                requestDto.biz_type(),
+                "추천 정보 조회에 실패하였습니다.",
+                List.of()
+        ));
     }
 
 }

@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team3.sambakja.service.GuideService;
 
-@RestController
+@RestController("/api/guide")
 @RequiredArgsConstructor
 public class GuideController {
 
     private final GuideService guideService;
 
-    @GetMapping("/guidebank")
+    @GetMapping("/bank")
     public ResponseEntity<String> getBank(@RequestParam(defaultValue = "1") int pageNo,
                                       @RequestParam(defaultValue = "10") int numOfRows) {
         String result = guideService.getBank(pageNo, numOfRows,2025);
