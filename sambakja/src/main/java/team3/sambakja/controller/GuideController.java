@@ -19,7 +19,7 @@ public class GuideController {
 
     @Operation(
             summary = "창업 가이드 조회",
-            description = "소상공인을 위한 창업 가이드 정보를 JSON 형식으로 반환합니다.!!"
+            description = "소상공인을 위한 창업 가이드 정보를 JSON 형식으로 반환합니다."
     )
     @ApiResponse(responseCode = "200", description = "가이드 데이터 반환")
     @GetMapping("/startup")
