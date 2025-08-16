@@ -101,7 +101,7 @@ jobs:
   deploy:
     needs: build-docker
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     environment: development
     
     steps:
