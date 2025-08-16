@@ -20,7 +20,6 @@ public class GuideService {
 
     private final RestTemplate restTemplate;
 
-    // 서울시 창업 프로그램 API
     public String getStartup() {
 
         String encodedSeoul = URLEncoder.encode("서울", StandardCharsets.UTF_8);
