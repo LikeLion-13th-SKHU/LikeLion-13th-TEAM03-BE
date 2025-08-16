@@ -69,7 +69,7 @@ public class Client {
         return Optional.ofNullable(
                 restTemplate.postForObject(bizRecommendUrl, request, BizResponse.class)
         ).orElse(new BizResponse(
-                requestDto.biz_type(),
+                requestDto.sex(),
                 "추천 정보 조회에 실패하였습니다.",
                 List.of()
         ));
