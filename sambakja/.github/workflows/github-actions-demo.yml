@@ -128,7 +128,7 @@ jobs:
           echo "🚀 새 컨테이너 실행..."
           sudo docker run -d \
             --name ${{ env.APP_NAME }} \
-            -p 8080:8080 \
+            -p 8082:8082 \
             --restart unless-stopped \
             ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:${IMAGE_TAG}
             
