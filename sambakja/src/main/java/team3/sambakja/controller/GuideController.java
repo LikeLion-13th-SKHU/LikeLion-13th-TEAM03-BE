@@ -1,5 +1,7 @@
 package team3.sambakja.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,11 @@ public class GuideController {
 
     private final GuideService guideService;
 
+    @Operation(
+            summary = "창업 가이드 조회",
+            description = "소상공인을 위한 창업 가이드 정보를 JSON 형식으로 반환합니다."
+    )
+    @ApiResponse(responseCode = "200", description = "가이드 데이터 반환")
     @GetMapping("/startup")
     public ResponseEntity<String> getStartup() {
         String response = guideService.getStartup();
