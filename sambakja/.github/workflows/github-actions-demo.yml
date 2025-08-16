@@ -4,7 +4,7 @@ run-name: ${{ github.actor }}가 Spring Boot 애플리케이션을 빌드하고 
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
