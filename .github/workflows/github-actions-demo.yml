@@ -46,7 +46,7 @@ jobs:
       run: ./gradlew bootJar --no-daemon
       
     - name: 📦 JAR 파일 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: jar-file
         path: build/libs/*.jar
@@ -63,7 +63,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: 📦 JAR 파일 다운로드
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: jar-file
         path: build/libs/
