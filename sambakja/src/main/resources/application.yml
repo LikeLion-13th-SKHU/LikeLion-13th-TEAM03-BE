@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: sambakja
+
+  profiles:
+    active: prod
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${spring.mail.username}
+    password: ${spring.mail.password}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+api:
+  bank:
+    key: ${api.bank.key}
+    url: ${api.bank.url}
+
+  Startup:
+    key: ${api.Startup.key}
+    url: ${api.Startup.url}
+
+  service:
+    region-dong-url: ${api.service.region-dong-url}
+    region-report-url: ${api.service.region-report-url}
+    biz-recommend-url: ${api.service.biz-recommend-url}
+
+inquiry:
+  notify-email: ${inquiry.notify-email}
+
+server:
+  port: 8082
