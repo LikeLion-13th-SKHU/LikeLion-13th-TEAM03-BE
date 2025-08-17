@@ -1,16 +1,13 @@
 name: Spring Boot CI/CD Pipeline
 run-name: ${{ github.actor }}가 Spring Boot 애플리케이션을 빌드하고 배포합니다 🚀
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 env:
   JAVA_VERSION: '17'
   APP_NAME: 'sambakja'
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -41,7 +38,6 @@ jobs:
         name: jar-file
         path: sambakja/build/libs/*.jar
         retention-days: 1
-
   build-docker:
     needs: build
     runs-on: ubuntu-latest
@@ -76,7 +72,6 @@ jobs:
           ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-
   deploy:
     needs: build-docker
     runs-on: ubuntu-latest
@@ -92,10 +87,17 @@ jobs:
         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
         script: |
           echo "🔄 기존 컨테이너 중지 및 제거..."
-          sudo docker stop ${{ env.APP_NAME }} || true
-          sudo docker rm ${{ env.APP_NAME }} || true
-          sudo lsof -ti:8082 | sudo xargs kill -9 || true
-          sleep 3
+          sudo docker stop sambakja || true
+          sudo docker rm -f sambakja || true
+          
+          echo "🔄 포트 8082 정리..."
+          PORT_PID=$(sudo lsof -ti:8082)
+          if [ ! -z "$PORT_PID" ]; then
+            echo "포트 8082 사용 중인 프로세스 $PORT_PID 종료"
+            sudo kill -9 $PORT_PID
+          fi
+          
+          sleep 5
           echo "📥 새 이미지 다운로드..."
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
           
