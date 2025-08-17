@@ -91,25 +91,19 @@ jobs:
         username: ${{ secrets.DEV_SERVER_USERNAME }}
         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
         script: |
-          echo "🔄 모든 sambakja 관련 컨테이너 정리..."
-          CONTAINERS=$(sudo docker ps -aq --filter "name=sambakja")
-          if [ ! -z "$CONTAINERS" ]; then
-            echo "기존 컨테이너 발견: $CONTAINERS"
-            echo "$CONTAINERS" | sudo xargs docker stop || true
-            echo "$CONTAINERS" | sudo xargs docker rm -f || true
-          else
-            echo "실행 중인 sambakja 컨테이너 없음"
-          fi
+          echo "🔄 sambakja 컨테이너 정리..."
+          sudo docker stop sambakja 2>/dev/null || echo "중지할 컨테이너 없음"
+          sudo docker rm -f sambakja 2>/dev/null || echo "제거할 컨테이너 없음"
           
-          echo "🔄 포트 8082 강제 해제..."
-          sudo fuser -k 8082/tcp || true
-          sudo pkill -f ".*8082.*" || true
+          echo "🔄 포트 8082 정리..."
+          sudo netstat -tlnp | grep :8082 | awk '{print $7}' | cut -d'/' -f1 | sudo xargs -r kill -9 || true
           
-          echo "🔄 Docker 네트워크 정리..."
-          sudo docker network prune -f || true
-          sudo docker system prune -f || true
+          echo "🔄 Docker 정리..."
+          sudo docker system prune -f --volumes || true
           
-          sleep 10
+          echo "⏳ 잠시 대기..."
+          sleep 5
+          
           echo "📥 새 이미지 다운로드..."
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
           
@@ -119,6 +113,9 @@ jobs:
             -p 8082:8082 \
             --restart unless-stopped \
             ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
+          
+          echo "✅ 컨테이너 실행 완료"
+          sudo docker ps | grep sambakja
             
     - name: 🩺 헬스 체크
       run: |
