@@ -15,10 +15,6 @@ spring:
       mail.smtp.starttls.enable: true
 
 api:
-  bank:
-    key: ${api.bank.key}
-    url: ${api.bank.url}
-
   Startup:
     key: ${api.Startup.key}
     url: ${api.Startup.url}
