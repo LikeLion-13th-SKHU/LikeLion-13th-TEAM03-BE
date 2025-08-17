@@ -112,6 +112,17 @@ jobs:
             --name ${{ env.APP_NAME }} \
             -p 8082:8082 \
             --restart unless-stopped \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            -e api.service.region-report-url="${{ secrets.API_SERVICE_REGION_REPORT_URL }}" \
+            -e api.service.region-dong-url="${{ secrets.API_SERVICE_REGION_DONG_URL }}" \
+            -e api.service.biz-recommend-url="${{ secrets.API_SERVICE_BIZ_RECOMMEND_URL }}" \
+            -e api.bank.key="${{ secrets.API_BANK_KEY }}" \
+            -e api.bank.url="${{ secrets.API_BANK_URL }}" \
+            -e api.Startup.key="${{ secrets.API_STARTUP_KEY }}" \
+            -e api.Startup.url="${{ secrets.API_STARTUP_URL }}" \
+            -e spring.mail.username="${{ secrets.SPRING_MAIL_USERNAME }}" \
+            -e spring.mail.password="${{ secrets.SPRING_MAIL_PASSWORD }}" \
+            -e inquiry.notify-email="${{ secrets.INQUIRY_NOTIFY_EMAIL }}" \
             ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
           
           echo "✅ 컨테이너 실행 완료"
