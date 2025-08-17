@@ -92,8 +92,14 @@ jobs:
         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
         script: |
           echo "🔄 모든 sambakja 관련 컨테이너 정리..."
-          sudo docker ps -aq --filter "name=sambakja" | sudo xargs docker stop || true
-          sudo docker ps -aq --filter "name=sambakja" | sudo xargs docker rm -f || true
+          CONTAINERS=$(sudo docker ps -aq --filter "name=sambakja")
+          if [ ! -z "$CONTAINERS" ]; then
+            echo "기존 컨테이너 발견: $CONTAINERS"
+            echo "$CONTAINERS" | sudo xargs docker stop || true
+            echo "$CONTAINERS" | sudo xargs docker rm -f || true
+          else
+            echo "실행 중인 sambakja 컨테이너 없음"
+          fi
           
           echo "🔄 포트 8082 강제 해제..."
           sudo fuser -k 8082/tcp || true
