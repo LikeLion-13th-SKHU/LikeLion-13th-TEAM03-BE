@@ -11,7 +11,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("http://localhost:5173",
-                           "https://qkrehdwns.shop")
+                           "https://qkrehdwns.shop",
+                            "https://www.odigage.store")
             .allowedMethods("GET", "POST", "OPTIONS")
             .allowedHeaders("*")
             .maxAge(3600)
