@@ -1,8 +1,7 @@
 package team3.sambakja.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +13,7 @@ import team3.sambakja.service.InquiryService;
 @RestController
 @RequestMapping("/api/inquiry")
 @RequiredArgsConstructor
+@Tag(name = "문의 API")
 public class InquiryController {
 
     private final InquiryService inquiryService;
@@ -22,13 +22,9 @@ public class InquiryController {
             summary = "문의 이메일 전송",
             description = "사용자의 이름, 연락처, 이메일, 문의 내용을 입력 받아 담당자 이메일로 전송합니다."
     )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "문의 전송 성공"),
-            @ApiResponse(responseCode = "500", description = "이메일 전송 실패")
-    })
     @PostMapping
-    public void submitInquiry(@RequestBody InquiryRequest request) {
-        inquiryService.sendInquiryEmail(request);
+    public String submitInquiry(@RequestBody InquiryRequest request) {
+        return inquiryService.sendInquiryEmail(request);
     }
 
 }

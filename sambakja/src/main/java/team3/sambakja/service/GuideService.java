@@ -10,8 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
+import team3.sambakja.common.apiPayload.exception.GeneralException;
+import team3.sambakja.common.apiPayload.status.ErrorStatus;
 import team3.sambakja.dto.response.StartupResponse;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,17 +32,27 @@ public class GuideService {
     private final RestTemplate restTemplate;
 
     public Page<StartupResponse> getStartup(Pageable pageable) {
+        try {
+            String encodedSeoul = URLEncoder.encode("서울", StandardCharsets.UTF_8);
 
-        String encodedSeoul = URLEncoder.encode("서울", StandardCharsets.UTF_8);
+            String url = String.format("%s?serviceKey=%s&cond[supt_regin::LIKE]=%s&returnType=json&page=%d&perPage=%d",
+                    startupApiUrl, startupKey, encodedSeoul,
+                    pageable.getPageNumber(),
+                    pageable.getPageSize());
 
-        String url = String.format("%s?serviceKey=%s&cond[supt_regin::LIKE]=%s&returnType=json&page=%d&perPage=%d",
-            startupApiUrl, startupKey, encodedSeoul,
-            pageable.getPageNumber(),
-            pageable.getPageSize());
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new GeneralException(ErrorStatus.GUIDE_STARTUP_API_FAILED);
+            }
 
-        return parseJsonToPage(response.getBody(), pageable);
+            return parseJsonToPage(response.getBody(), pageable);
+
+        } catch (GeneralException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.GUIDE_STARTUP_API_FAILED);
+        }
     }
 
     private Page<StartupResponse> parseJsonToPage(String jsonResponse, Pageable pageable) {
@@ -49,46 +60,43 @@ public class GuideService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
 
-            // 총 개수 정보 추출
             long totalCount = rootNode.get("totalCount").asLong();
-
-            // data 배열에서 각 항목을 StartupResponse로 변환
             JsonNode dataNode = rootNode.get("data");
             List<StartupResponse> startupList = new ArrayList<>();
 
             if (dataNode != null && dataNode.isArray()) {
                 for (JsonNode item : dataNode) {
                     StartupResponse startup = new StartupResponse(
-                        getTextValue(item, "id") != null ? Long.valueOf(Objects.requireNonNull(getTextValue(item, "id"))) : null,
-                        getTextValue(item, "pbanc_sn"),
-                        getTextValue(item, "biz_pbanc_nm"),
-                        getTextValue(item, "pbanc_ntrp_nm"),
-                        getTextValue(item, "intg_pbanc_biz_nm"),
-                        getTextValue(item, "pbanc_ctnt"),
-                        getTextValue(item, "aply_trgt"),
-                        getTextValue(item, "aply_trgt_ctnt"),
-                        getTextValue(item, "biz_trgt_age"),
-                        getTextValue(item, "biz_enyy"),
-                        getTextValue(item, "supt_regin"),
-                        getTextValue(item, "supt_biz_clsfc"),
-                        getTextValue(item, "sprv_inst"),
-                        getTextValue(item, "biz_prch_dprt_nm"),
-                        getTextValue(item, "prch_cnpl_no"),
-                        getTextValue(item, "pbanc_rcpt_bgng_dt"),
-                        getTextValue(item, "pbanc_rcpt_end_dt"),
-                        getTextValue(item, "detl_pg_url"),
-                        getTextValue(item, "biz_gdnc_url"),
-                        getTextValue(item, "biz_aply_url"),
-                        getTextValue(item, "aply_mthd_onli_rcpt_istc"),
-                        getTextValue(item, "aply_mthd_eml_rcpt_istc"),
-                        getTextValue(item, "aply_mthd_fax_rcpt_istc"),
-                        getTextValue(item, "aply_mthd_pssr_rcpt_istc"),
-                        getTextValue(item, "aply_mthd_vst_rcpt_istc"),
-                        getTextValue(item, "aply_mthd_etc_istc"),
-                        getTextValue(item, "aply_excl_trgt_ctnt"),
-                        getTextValue(item, "intg_pbanc_yn"),
-                        getTextValue(item, "rcrt_prgs_yn"),
-                        getTextValue(item, "prfn_matr")
+                            getTextValue(item, "id") != null ? Long.valueOf(Objects.requireNonNull(getTextValue(item, "id"))) : null,
+                            getTextValue(item, "pbanc_sn"),
+                            getTextValue(item, "biz_pbanc_nm"),
+                            getTextValue(item, "pbanc_ntrp_nm"),
+                            getTextValue(item, "intg_pbanc_biz_nm"),
+                            getTextValue(item, "pbanc_ctnt"),
+                            getTextValue(item, "aply_trgt"),
+                            getTextValue(item, "aply_trgt_ctnt"),
+                            getTextValue(item, "biz_trgt_age"),
+                            getTextValue(item, "biz_enyy"),
+                            getTextValue(item, "supt_regin"),
+                            getTextValue(item, "supt_biz_clsfc"),
+                            getTextValue(item, "sprv_inst"),
+                            getTextValue(item, "biz_prch_dprt_nm"),
+                            getTextValue(item, "prch_cnpl_no"),
+                            getTextValue(item, "pbanc_rcpt_bgng_dt"),
+                            getTextValue(item, "pbanc_rcpt_end_dt"),
+                            getTextValue(item, "detl_pg_url"),
+                            getTextValue(item, "biz_gdnc_url"),
+                            getTextValue(item, "biz_aply_url"),
+                            getTextValue(item, "aply_mthd_onli_rcpt_istc"),
+                            getTextValue(item, "aply_mthd_eml_rcpt_istc"),
+                            getTextValue(item, "aply_mthd_fax_rcpt_istc"),
+                            getTextValue(item, "aply_mthd_pssr_rcpt_istc"),
+                            getTextValue(item, "aply_mthd_vst_rcpt_istc"),
+                            getTextValue(item, "aply_mthd_etc_istc"),
+                            getTextValue(item, "aply_excl_trgt_ctnt"),
+                            getTextValue(item, "intg_pbanc_yn"),
+                            getTextValue(item, "rcrt_prgs_yn"),
+                            getTextValue(item, "prfn_matr")
                     );
                     startupList.add(startup);
                 }
@@ -97,14 +105,12 @@ public class GuideService {
             return new PageImpl<>(startupList, pageable, totalCount);
 
         } catch (Exception e) {
-            throw new RuntimeException("JSON 파싱 오류: " + e.getMessage(), e);
+            throw new GeneralException(ErrorStatus.GUIDE_STARTUP_JSON_PARSE_ERROR);
         }
     }
 
-    // null 값 처리를 위한 헬퍼 메서드
     private String getTextValue(JsonNode node, String fieldName) {
         JsonNode fieldNode = node.get(fieldName);
         return (fieldNode != null && !fieldNode.isNull()) ? fieldNode.asText() : null;
     }
-
 }

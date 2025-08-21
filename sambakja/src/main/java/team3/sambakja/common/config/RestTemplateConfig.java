@@ -1,4 +1,4 @@
-package team3.sambakja.config;
+package team3.sambakja.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

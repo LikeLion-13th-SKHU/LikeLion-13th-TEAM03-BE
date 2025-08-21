@@ -1,14 +1,12 @@
 package team3.sambakja.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,15 +17,15 @@ import team3.sambakja.service.GuideService;
 @RestController
 @RequestMapping("/api/guide")
 @RequiredArgsConstructor
+@Tag(name = "스타트업/창업 정책 API")
 public class GuideController {
 
     private final GuideService guideService;
 
     @Operation(
-            summary = "창업 가이드 조회",
-            description = "소상공인을 위한 창업 가이드 정보를 JSON 형식으로 반환합니다."
+            summary = "스타트업/창업 정책 조회",
+            description = "소상공인을 위한 창업 가이드 정보를 반환합니다."
     )
-    @ApiResponse(responseCode = "200", description = "가이드 데이터 반환")
     @GetMapping("/startup")
     public Page<StartupResponse> getStartup(@RequestParam(defaultValue = "1") int page,
                                             @RequestParam(defaultValue = "15") int size,

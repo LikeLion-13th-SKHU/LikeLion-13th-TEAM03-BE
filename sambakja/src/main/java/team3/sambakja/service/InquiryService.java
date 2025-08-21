@@ -2,9 +2,12 @@ package team3.sambakja.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import team3.sambakja.common.apiPayload.exception.GeneralException;
+import team3.sambakja.common.apiPayload.status.ErrorStatus;
 import team3.sambakja.dto.request.InquiryRequest;
 
 @Service
@@ -16,13 +19,21 @@ public class InquiryService {
     @Value("${inquiry.notify-email}")
     private String notifyEmail;
 
-    public void sendInquiryEmail(InquiryRequest request) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(notifyEmail);
-        message.setSubject("[삼박자] 문의 접수 : " + request.name());
-        message.setText(buildContent(request));
+    public String sendInquiryEmail(InquiryRequest request) {
+        String body = buildContent(request);
 
-        mailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(notifyEmail);
+            message.setSubject("[삼박자] 문의 접수 : " + request.name());
+            message.setText(body);
+
+            mailSender.send(message);
+            return body;
+
+        } catch (MailException e) {
+            throw new GeneralException(ErrorStatus.INQUIRY_MAIL_SEND_FAILED);
+        }
     }
 
     private String buildContent(InquiryRequest request) {
