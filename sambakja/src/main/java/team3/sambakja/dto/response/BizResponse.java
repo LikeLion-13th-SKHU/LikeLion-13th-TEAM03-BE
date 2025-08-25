@@ -17,7 +17,8 @@ public record BizResponse(
                 @JsonProperty("직장인구") String officePopulation,
                 @JsonProperty("연령층") String ageGroup,
                 @JsonProperty("임대료") String rent,
-                @JsonProperty("상권특징") String commercialFeature
+                @JsonProperty("상권특징") String commercialFeature,
+                @JsonProperty("LLM평가") String llm
         ) {}
     }
 }
